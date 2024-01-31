@@ -26,7 +26,7 @@ SECRET_KEY = 'django-insecure-rm4lxw9xy0@cmr^h2pxdd3z!h+6%t!x$^gav7g!&4$nbt=c1vf
 DEBUG = True
 
 #ALLOWED_HOSTS = []
-ALLOWED_HOSTS = ['.vercel.app', '.now.sh']
+ALLOWED_HOSTS = [*]
 
 
 # Application definition
@@ -49,6 +49,7 @@ MIDDLEWARE = [
     'django.contrib.auth.middleware.AuthenticationMiddleware',
     'django.contrib.messages.middleware.MessageMiddleware',
     'django.middleware.clickjacking.XFrameOptionsMiddleware',
+    'whitenoise.middleware.WhiteNoiseMiddleware',
 ]
 
 ROOT_URLCONF = 'citadel.urls'
@@ -127,3 +128,23 @@ DEFAULT_AUTO_FIELD = 'django.db.models.BigAutoField'
 #This is for vercel
 STATICFILES_DIRS = os.path.join(BASE_DIR, 'static'),
 STATIC_ROOT = os.path.join(BASE_DIR, 'staticfiles_build', 'static')
+#This is for raleway
+import dj_database_url
+
+if 'DATABASE_URL' in os.environ:
+    DATABASES['default'] = dj_database_url.config(
+        conn_max_age=500,
+        conn_health_checks=True,
+    )
+
+STATIC_ROOT = BASE_DIR / 'staticfiles'
+
+# The URL to use when referring to static files (where they will be served from)
+STATIC_URL = '/static/'
+#for efficiency and to save time
+STORAGES = {
+    # ...
+    "staticfiles": {
+        "BACKEND": "whitenoise.storage.CompressedManifestStaticFilesStorage",
+    },
+}
